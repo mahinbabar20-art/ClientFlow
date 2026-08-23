@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientFlow</title>>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#0f1113;
+    color:#f5f5f5;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    width:250px;
+    height:100vh;
+    background:#0a0b0d;
+    padding:25px 15px;
+    position:fixed;
+    left:0;
+    top:0;
+    border-right:1px solid #24272b;
+    transition:.3s ease;
+    z-index:1000;
+}
+
+.logo{
+    margin-bottom:45px;
+    padding-left:10px;
+    font-size:24px;
+    font-weight:bold;
+    color:#ff7a00;
+}
+
+.sidebar nav{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.sidebar i{
+    font-size:18px;
+}
+
+.sidebar a{
+    text-decoration:none;
+    color:#92969c;
+    font-size:14px;
+    padding:12px 15px;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    transition:.2s ease;
+}
+
+.sidebar a:hover{
+    background:#1a1d20;
+    color:#ff7a00;
+}
+
+.sidebar a.active{
+    background:#24180f;
+    color:#ff7a00;
+    border-left:3px solid #ff7a00;
+    font-weight:600;
+}
+
+.sidebar-bottom{
+    position:absolute;
+    bottom:20px;
+    left:15px;
+    right:15px;
+    display:flex;
+    flex-direction:column;
+}
+
+
+/* =========================
+   TOPBAR
+========================= */
+
+.topbar{
+    height:70px;
+    background:#111315;
+    position:fixed;
+    top:0;
+    left:250px;
+    right:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 30px;
+
+    border-bottom:1px solid #24272b;
+    z-index:900;
+    transition:.3s ease;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+.toggle-btn{
+    background:none;
+    border:none;
+    color:#f5f5f5;
+    padding:8px;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#ddd;
+}
+
+.profile i{
+    font-size:30px;
+    color:#ff7a00;
+}
+
+
+/* =========================
+   SIDEBAR COLLAPSE
+========================= */
+
+#menu-toggle{
+    display:none;
+}
+
+#menu-toggle:checked ~ .sidebar{
+    width:75px;
+}
+
+#menu-toggle:checked ~ .sidebar .logo{
+    font-size:0;
+}
+
+#menu-toggle:checked ~ .sidebar a{
+    font-size:0;
+    justify-content:center;
+}
+
+#menu-toggle:checked ~ .sidebar i{
+    font-size:20px;
+}
+
+#menu-toggle:checked ~ .main-content{
+    margin-left:75px;
+}
+
+#menu-toggle:checked ~ .topbar{
+    left:75px;
+}
+
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.main-content{
+    margin-left:250px;
+    padding:105px 40px 45px;
+    transition:.3s ease;
+}
+
+
+/* =========================
+   PAGE HEADING
+========================= */
+
+.page-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.page-heading h1{
+    font-size:29px;
+    margin-bottom:7px;
+    color:#fff;
+}
+
+.page-heading p{
+    color:#92969c;
+    font-size:14px;
+}
+
+
+/* =========================
+   ADD CUSTOMER BUTTON
+========================= */
+
+.add-lead-btn{
+    border:none;
+    background:#ff7a00;
+    color:#111;
+
+    padding:12px 19px;
+    border-radius:9px;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    font-size:14px;
+    font-weight:bold;
+
+    box-shadow:0 5px 18px rgba(255,122,0,.22);
+    transition:.2s ease;
+}
+
+.add-lead-btn:hover{
+    background:#ff8c1a;
+    transform:translateY(-2px);
+    box-shadow:0 8px 22px rgba(255,122,0,.3);
+}
+
+
+/* =========================
+   SEARCH + FILTER
+========================= */
+
+.lead-tools{
+    display:flex;
+    gap:14px;
+    margin-bottom:24px;
+}
+
+.search-box{
+    background:#171a1d;
+    border:1px solid #292d32;
+    border-radius:10px;
+
+    padding:12px 15px;
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    flex:1;
+
+    transition:.2s ease;
+}
+
+.search-box i{
+    color:#ff7a00;
+}
+
+.search-box input{
+    border:none;
+    outline:none;
+    width:100%;
+
+    font-size:14px;
+    background:transparent;
+    color:#fff;
+}
+
+.search-box input::placeholder{
+    color:#70757c;
+}
+
+.search-box:focus-within{
+    border-color:#ff7a00;
+    box-shadow:
+        0 0 0 3px rgba(255,122,0,.12),
+        0 0 12px rgba(255,122,0,.15);
+}
+
+.lead-tools select{
+    border:1px solid #292d32;
+    outline:none;
+
+    background:#171a1d;
+    color:#ddd;
+
+    padding:12px 16px;
+    min-width:150px;
+
+    border-radius:10px;
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.lead-tools select:focus{
+    border-color:#ff7a00;
+    box-shadow:
+        0 0 0 3px rgba(255,122,0,.12),
+        0 0 12px rgba(255,122,0,.15);
+
+    outline:none;
+}
+
+
+/* =========================
+   TABLE
+========================= */
+
+.section{
+    background:#171a1d;
+    border:1px solid #292d32;
+    border-radius:15px;
+    padding:24px;
+    box-shadow:0 8px 30px rgba(0,0,0,.18);
+}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.section-header h2{
+    font-size:18px;
+    color:#fff;
+}
+
+.section-header span{
+    color:#a0a4aa;
+    background:#22262a;
+    padding:6px 11px;
+    border-radius:20px;
+    font-size:12px;
+}
+
+.table-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    text-align:left;
+
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+
+    color:#777d84;
+
+    padding:13px 12px;
+
+    background:#131517;
+    border-bottom:1px solid #292d32;
+}
+
+td{
+    padding:16px 12px;
+
+    border-bottom:1px solid #25282c;
+
+    font-size:13px;
+    color:#c8cbd0;
+}
+
+tbody tr{
+    transition:.2s ease;
+}
+
+tbody tr:hover{
+    background:#1d2024;
+}
+
+tbody tr:last-child td{
+    border-bottom:none;
+}
+
+td strong{
+    color:#fff;
+}
+
+td small{
+    display:block;
+    color:#777d84;
+    margin-top:4px;
+    font-size:11px;
+}
+
+
+/* =========================
+   CUSTOMER STATUS
+========================= */
+
+.customer-status{
+    display:inline-flex;
+    padding:6px 11px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:600;
+}
+
+.active-status{
+    background:#173523;
+    color:#55d98a;
+}
+
+.inactive-status{
+    background:#292c30;
+    color:#a4a8ad;
+}
+
+/* =========================
+   CUSTOMER SUMMARY
+========================= */
+
+.customer-summary{
+    display:grid;
+    gap:20px;
+    margin-top:25px;
+    grid-template-columns:1.4fr 1fr 1fr;
+    padding-bottom: 40px;
+}
+
+.summary-card{
+    background:#171a1d;
+    border:1px solid #292d32;
+    padding:22px;
+    border-radius:18px;
+    box-shadow:0 4px 15px rgba(0, 0, 0, 0.05);
+    display:flex;
+    align-items:center;
+    gap:25px;
+    transition:.2s ease;
+}
+
+.total-card{
+    display:block;
+}
+
+.summary-card:hover{
+    border-color:#ff7a00;
+    transform:translateY(-2px);
+}
+
+
+/* =========================
+   TOTAL CUSTOMER HEADER
+========================= */
+
+.summary-card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+}
+
+.summary-card-header p{
+    margin:0;
+    font-size:15px;
+    font-weight:600;
+    color:#858b92;
+}
+
+.summary-card-header i{
+    font-size:22px;
+    color:#7b2cbf;
+}
+
+
+/* =========================
+   TOTAL CUSTOMER CHART
+========================= */
+
+.customer-chart{
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+.donut-chart{
+    width:100px;
+    height:100px;
+    min-width:100px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+
+    /* 79% Active = Purple
+       21% Inactive = Pink */
+    background:conic-gradient(
+        #7b2cbf 0deg 284deg,
+        #ff3d8d 284deg 360deg
+    );
+}
+
+
+/* Inner dark circle */
+
+.donut-chart::before{
+    content:"";
+    position:absolute;
+
+    width:72px;
+    height:72px;
+
+    background:#171a1d;
+    border-radius:50%;
+}
+
+
+/* Number inside */
+
+.donut-center{
+    position:relative;
+    z-index:2;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+.donut-center strong{
+    font-size:21px;
+    color:#fff;
+}
+
+.donut-center span{
+    font-size:11px;
+    color:#858b92;
+}
+
+
+/* =========================
+   LEGEND
+========================= */
+
+.chart-legend{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.chart-legend div{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    color:#858b92;
+    font-size:13px;
+}
+
+.chart-legend strong{
+    color:#fff;
+    margin-left:3px;
+}
+
+.legend-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    display:inline-block;
+}
+
+
+/* Active = Purple */
+
+.active-dot{
+    background:#7b2cbf;
+}
+
+
+/* Inactive = Pink */
+
+.inactive-dot{
+    background:#ff3d8d;
+}
+
+
+/* =========================
+   SMALL DONUTS
+========================= */
+
+.donut{
+    width:70px;
+    height:70px;
+    min-width:70px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+}
+
+
+/* Inner dark circle */
+
+.donut::before{
+    content:"";
+    position:absolute;
+
+    width:52px;
+    height:52px;
+
+    background:#171a1d;
+    border-radius:50%;
+}
+
+
+/* Number inside */
+
+.donut span{
+    position:relative;
+    z-index:2;
+
+    font-size:13px;
+    font-weight:bold;
+}
+
+
+/* =========================
+   ACTIVE
+   PURPLE
+========================= */
+
+.active-donut{
+    background:conic-gradient(
+        #7b2cbf 0deg 284deg,
+        #292d32 284deg 360deg
+    );
+}
+
+.active-donut span{
+    color:#7b2cbf;
+}
+
+
+/* =========================
+   INACTIVE
+   PINK
+========================= */
+
+.inactive-donut{
+    background:conic-gradient(
+        #ff3d8d 0deg 76deg,
+        #292d32 76deg 360deg
+    );
+}
+
+.inactive-donut span{
+    color:#ff3d8d;
+}
+
+
+/* =========================
+   TEXT
+========================= */
+
+.summary-info p{
+    color:#858b92;
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.summary-info h2{
+    font-size:27px;
+    color:#fff;
+}
+
+
+/* =========================
+   CUSTOMER MODAL
+========================= */
+/* =========================
+   CUSTOMER MODAL
+========================= */
+
+.customer-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.72);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:1000;
+    backdrop-filter:blur(4px);
+}
+
+.customer-modal-content{
+    background:#181b1f;
+
+    width:600px;
+    max-width:90%;
+
+    padding:30px;
+
+    border-radius:17px;
+
+    border:1px solid #30343a;
+
+    box-shadow:0 25px 70px rgba(0,0,0,.5);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:25px;
+}
+
+.modal-header h2{
+    font-size:21px;
+    color:#fff;
+    margin-bottom:5px;
+}
+
+.modal-header p{
+    color:#858b92;
+    font-size:13px;
+}
+
+.close-modal{
+    border:none;
+    background:#24282c;
+
+    width:32px;
+    height:32px;
+
+    border-radius:50%;
+
+    font-size:22px;
+    color:#aaa;
+
+    cursor:pointer;
+}
+
+.close-modal:hover{
+    background:#ff7a00;
+    color:#111;
+}
+
+.form-row{
+    display:flex;
+    gap:18px;
+    margin-bottom:18px;
+}
+
+.form-group{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-size:12px;
+    color:#aaa;
+    margin-bottom:7px;
+    font-weight:600;
+}
+
+.form-group input,
+.form-group select{
+    padding:11px 12px;
+
+    border:1px solid #30343a;
+    border-radius:8px;
+
+    outline:none;
+
+    font-size:13px;
+
+    background:#111315;
+    color:#fff;
+
+    transition:.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#ff7a00;
+
+    box-shadow:
+        0 0 0 3px rgba(255,122,0,.1),
+        0 0 10px rgba(255,122,0,.12);
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:25px;
+}
+
+.cancel-btn{
+    padding:10px 18px;
+
+    border:1px solid #363a40;
+    background:#22262a;
+
+    border-radius:8px;
+    cursor:pointer;
+    color:#ccc;
+}
+
+.cancel-btn:hover{
+    background:#292d32;
+}
+
+.save-customer-btn{
+    padding:10px 20px;
+
+    border:none;
+    background:#ff7a00;
+    color:#111;
+
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.save-customer-btn:hover{
+    background:#ff8c1a;
+}
+
+
+/* =========================
+   DELETE BUTTON
+========================= */
+.delete-customer-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+
+    background:#2a1717;
+    color:#ff6b6b;
+
+    border:1px solid #4a2525;
+
+    padding:8px 13px;
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:12px;
+    font-weight:600;
+
+    transition:all .2s ease;
+}
+
+.delete-customer-btn:hover{
+    background:#d64545;
+    border-color:#d64545;
+    color:#fff;
+
+    transform:translateY(-1px);
+
+    box-shadow:0 5px 15px rgba(214,69,69,.25);
+}
+
+.delete-customer-btn:active{
+    transform:scale(.96);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:75px;
+    }
+
+    .sidebar .logo{
+        font-size:0;
+    }
+
+    .sidebar a{
+        font-size:0;
+        justify-content:center;
+    }
+
+    .main-content{
+        margin-left:75px;
+    }
+
+    .topbar{
+        left:75px;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .main-content{
+        padding:95px 20px 30px;
+    }
+
+    .page-heading{
+        align-items:flex-start;
+        gap:20px;
+        flex-direction:column;
+    }
+
+    .lead-tools{
+        flex-direction:column;
+    }
+
+    .lead-tools select{
+        height:45px;
+    }
+
+    .customer-summary{
+        grid-template-columns:1fr;
+    }
+
+    .form-row{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .customer-modal-content{
+        padding:22px;
+        max-height:90vh;
+        overflow-y:auto;
+    }
+
+}
+
+/* =========================
+   CUSTOMER DELETE MODAL
+========================= */
+
+.customer-delete-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.72);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:2000;
+
+    backdrop-filter:blur(5px);
+}
+
+.customer-delete-box{
+    width:400px;
+    max-width:90%;
+
+    background:#181b1f;
+
+    border:1px solid #30343a;
+    border-radius:18px;
+
+    padding:32px;
+
+    text-align:center;
+
+    box-shadow:0 25px 70px rgba(0,0,0,.55);
+}
+
+.customer-delete-icon{
+    width:55px;
+    height:55px;
+
+    margin:0 auto 16px;
+
+    border-radius:50%;
+
+    background:#351b1b;
+    color:#ff6868;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:22px;
+}
+
+.customer-delete-box h3{
+    color:#fff;
+    font-size:20px;
+    margin-bottom:9px;
+}
+
+.customer-delete-box p{
+    color:#92969c;
+    font-size:13px;
+    line-height:1.6;
+    margin-bottom:26px;
+}
+
+.customer-delete-box strong{
+    color:#fff;
+}
+
+.customer-delete-actions{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.cancel-customer-delete,
+.confirm-customer-delete{
+    padding:11px 18px;
+
+    border-radius:8px;
+
+    font-size:13px;
+    font-weight:600;
+
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.cancel-customer-delete{
+    background:#22262a;
+    color:#ccc;
+    border:1px solid #363a40;
+}
+
+.cancel-customer-delete:hover{
+    background:#2c3035;
+}
+
+.confirm-customer-delete{
+    background:#d64545;
+    color:white;
+    border:none;
+}
+
+.confirm-customer-delete:hover{
+    background:#ef5353;
+    box-shadow:0 5px 18px rgba(214,69,69,.25);
+}
+/* =========================
+   PROFILE DROPDOWN
+========================= */
+
+.profile-wrapper{
+    position:relative;
+}
+
+
+/* Profile Button */
+
+.profile{
+    border:none;
+    background:none;
+
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    color:#ddd;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    padding:6px 8px;
+
+    border-radius:9px;
+
+    transition:.2s ease;
+}
+
+.profile:hover{
+    background:#1a1d20;
+}
+
+.profile i:first-child{
+    font-size:30px;
+    color:#ff7a00;
+}
+
+
+/* Arrow */
+
+.profile-arrow{
+    font-size:11px !important;
+
+    color:#777d84 !important;
+
+    transition:.2s ease;
+}
+
+
+/* Rotate arrow */
+
+.profile-wrapper.open .profile-arrow{
+    transform:rotate(180deg);
+}
+
+
+/* =========================
+   PROFILE MENU
+========================= */
+
+.profile-menu{
+
+    position:absolute;
+
+    top:52px;
+    right:0;
+
+    width:235px;
+
+    background:#171a1d;
+
+    border:1px solid #292d32;
+
+    border-radius:13px;
+
+    padding:10px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.45);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:translateY(-8px);
+
+    transition:.2s ease;
+
+    z-index:2000;
+}
+
+
+/* Open */
+
+.profile-wrapper.open .profile-menu{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:translateY(0);
+}
+
+
+/* =========================
+   MENU HEADER
+========================= */
+
+.profile-menu-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:11px;
+
+    padding:10px;
+
+}
+
+.profile-menu-header > i{
+
+    font-size:35px;
+
+    color:#ff7a00;
+}
+
+.profile-menu-header strong{
+
+    display:block;
+
+    color:#fff;
+
+    font-size:13px;
+
+    margin-bottom:3px;
+}
+
+.profile-menu-header small{
+
+    display:block;
+
+    color:#777d84;
+
+    font-size:10px;
+}
+
+
+/* Divider */
+
+.profile-divider{
+
+    height:1px;
+
+    background:#292d32;
+
+    margin:6px 0;
+}
+
+
+/* =========================
+   MENU LINKS
+========================= */
+
+.profile-menu a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    text-decoration:none;
+
+    color:#a5a9ae;
+
+    padding:11px;
+
+    border-radius:8px;
+
+    font-size:13px;
+
+    transition:.2s ease;
+}
+
+.profile-menu a i{
+
+    font-size:16px;
+}
+
+
+/* Hover */
+
+.profile-menu a:hover{
+
+    background:#22262a;
+
+    color:#ff7a00;
+}
+
+
+/* Logout */
+
+.profile-menu .profile-logout:hover{
+
+    color:#ff6868;
+
+    background:#2a1717;
+}
+</style>
+<body>
+    <input type="checkbox" id="menu-toggle">
+    <header class="topbar">
+
+        <label for="menu-toggle" class="toggle-btn">
+            <i class="bi bi-list"></i>
+        </label>
+    
+        <div class="topbar-right">
+            <i class="bi bi-bell"></i>
+    
+            <div class="profile-wrapper">
+
+                <button class="profile" id="profileBtn">
+                    <i class="bi bi-person-circle"></i>
+            
+                    <span>Admin</span>
+            
+                    <i class="bi bi-chevron-down profile-arrow"></i>
+                </button>
+            
+            
+                <div class="profile-menu" id="profileMenu">
+            
+                    <div class="profile-menu-header">
+                        <i class="bi bi-person-circle"></i>
+            
+                        <div>
+                            <strong>Admin User</strong>
+                            <small>admin@example.com</small>
+                        </div>
+                    </div>
+            
+            
+                    <div class="profile-divider"></div>
+            
+            
+                    <a href="settings.html">
+                        <i class="bi bi-gear"></i>
+                        Settings
+                    </a>
+            
+            
+                    <a href="logout.html" class="profile-logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </a>
+            
+                </div>
+            
+            </div>
+        </div>
+    
+    </header>
+    
+    
+     <aside class="sidebar">
+     <h2 class="logo">ClientFlow</h2>
+       <nav>
+        <a href="dashboard.html">
+            <i class="bi bi-grid"></i>
+            Dashboard</a>
+        <a href="lead.html">
+            <i class="bi bi-people"></i>
+            Leads</a>
+        <a href="customers.html"  class="active">
+            <i class="bi bi-person"></i>
+            Customers</a>
+        <a href="properties.html">
+            <i class="bi bi-house"></i>
+            Properties</a>
+        <a href="pipelines.html">
+            <i class="bi bi-kanban"></i>
+            Pipeline</a>
+        <a href="followup.html">
+            <i class="bi bi-calendar-check"></i>
+            Follow ups</a>
+        <a href="agent.html">
+            <i class="bi bi-person-badge"></i>
+            Agents</a>
+        <a href="reports.html">
+            <i class="bi bi-bar-chart"></i>
+            Reports</a>
+       </nav>
+     <div class="sidebar-bottom">
+        <a href="settings.html">
+            <i class="bi bi-gear"></i>
+            Settings</a>
+        <a href="logout.html">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout</a>
+     </div>
+     </aside>
+
+     <main class="main-content">
+
+        <!-- Page Heading -->
+        <div class="page-heading">
+            <div>
+                <h1>Customers</h1>
+                <p>Manage your existing and converted customers.</p>
+            </div>
+    
+            <button class="add-lead-btn" id="addCustomerBtn">
+                <i class="bi bi-person-plus"></i>
+                Add Customer
+            </button>
+        </div>
+    
+    
+        <!-- Search & Filter -->
+        <div class="lead-tools">
+    
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="customerSearch" placeholder="Search customers...">
+            </div>
+    
+            <select id="customerFilter">
+                <option value="All">All Customers</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+    
+        </div>
+    
+         <!-- Customer Summary -->
+         <div class="customer-summary">
+
+            <div class="summary-card total-card">
+        
+                <div class="summary-card-header">
+                    <p>Total Customers</p>
+                    <i class="bi bi-people"></i>
+                </div>
+        
+                <div class="customer-chart">
+        
+                    <div class="donut-chart" id="customerDonut">
+                        <div class="donut-center">
+                            <strong id="totalCustomers">124</strong>
+                            <span>Total</span>
+                        </div>
+                    </div>
+        
+                    <div class="chart-legend">
+        
+                        <div>
+                            <span class="legend-dot active-dot"></span>
+                            Active
+                            <strong id="activeCustomers">98</strong>
+                        </div>
+        
+                        <div>
+                            <span class="legend-dot inactive-dot"></span>
+                            Inactive
+                            <strong id="inactiveCustomers">26</strong>
+                        </div>
+        
+                    </div>
+        
+                </div>
+        
+            </div>
+        
+        
+        
+        
+            <div class="summary-card">
+                <div class="donut active-donut">
+                    <span>79%</span>
+                </div>
+        
+                <div class="summary-info">
+                    <p>Active Customers</p>
+                    <h2 id="activeCustomers">98</h2>
+                </div>
+            </div>
+        
+        
+            <div class="summary-card">
+                <div class="donut inactive-donut">
+                    <span>21%</span>
+                </div>
+        
+                <div class="summary-info">
+                    <p>Inactive Customers</p>
+                    <h2 id="inactiveCustomers">26</h2>
+                </div>
+            </div>
+        
+        </div>
+    
+        <!-- Customers Table -->
+        <div class="section">
+    
+            <div class="section-header">
+                <h2>All Customers</h2>
+                <span id="customerCount">124 Customers</span>
+            </div>
+    
+            <div class="table-container">
+    
+                <table>
+    
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Contact</th>
+                            <th>Location</th>
+                            <th>Property Interest</th>
+                            <th>Budget</th>
+                            <th>Status</th>
+                            <th>Agent</th>
+                            <th>Last Contact</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+    
+                    <tbody id="customerTableBody">
+    
+                        <tr>
+                            <td>
+                                <strong>Ahmed Khan</strong>
+                                <small>Customer #001</small>
+                            </td>
+    
+                            <td>
+                                <small>0300-1234567</small>
+                                <small>ahmed@email.com</small>
+                            </td>
+    
+                            <td>DHA</td>
+    
+                            <td>5 Marla House</td>
+    
+                            <td>2 Crore</td>
+    
+                            <td>
+                                <span class="customer-status active-status">
+                                    Active
+                                </span>
+                            </td>
+    
+                            <td>Ali</td>
+    
+                            <td>Today</td>
+
+                            <td>
+                                <button class="delete-customer-btn">Delete</button>
+                            </td>
+                        </tr>
+    
+    
+                        <tr>
+                            <td>
+                                <strong>Sarah Ali</strong>
+                                <small>Customer #002</small>
+                            </td>
+    
+                            <td>
+                                <small>0312-4567890</small>
+                                <small>sarah@email.com</small>
+                            </td>
+    
+                            <td>Bahria Town</td>
+    
+                            <td>Villa</td>
+    
+                            <td>1.5 Crore</td>
+    
+                            <td>
+                                <span class="customer-status active-status">
+                                    Active
+                                </span>
+                            </td>
+    
+                            <td>Hira</td>
+    
+                            <td>Yesterday</td>
+
+                            <td>
+                                <button class="delete-customer-btn">Delete</button>
+                            </td>
+                        </tr>
+    
+    
+                        <tr>
+                            <td>
+                                <strong>Usman Raza</strong>
+                                <small>Customer #003</small>
+                            </td>
+    
+                            <td>
+                                <small>0321-7890123</small>
+                                <small>usman@email.com</small>
+                            </td>
+    
+                            <td>Gulberg</td>
+    
+                            <td>Apartment</td>
+    
+                            <td>85 Lac</td>
+    
+                            <td>
+                                <span class="customer-status active-status">
+                                    Active
+                                </span>
+                            </td>
+    
+                            <td>Ahmed</td>
+    
+                            <td>Aug 20</td>
+
+                            <td>
+                                <button class="delete-customer-btn">Delete</button>
+                            </td>
+                        </tr>
+    
+    
+                        <tr>
+                            <td>
+                                <strong>Hira Ahmed</strong>
+                                <small>Customer #004</small>
+                            </td>
+    
+                            <td>
+                                <small>0333-5678901</small>
+                                <small>hira@email.com</small>
+                            </td>
+    
+                            <td>Model Town</td>
+    
+                            <td>House</td>
+    
+                            <td>1.2 Crore</td>
+    
+                            <td>
+                                <span class="customer-status inactive-status">
+                                    Inactive
+                                </span>
+                            </td>
+    
+                            <td>Ali</td>
+    
+                            <td>Aug 15</td>
+
+                            <td>
+                                <button class="delete-customer-btn">Delete</button>
+                            </td>
+                        </tr>
+    
+    
+                        <tr>
+                            <td>
+                                <strong>Bilal Ahmed</strong>
+                                <small>Customer #005</small>
+                            </td>
+    
+                            <td>
+                                <small>0301-9876543</small>
+                                <small>bilal@email.com</small>
+                            </td>
+    
+                            <td>DHA</td>
+    
+                            <td>10 Marla House</td>
+    
+                            <td>3 Crore</td>
+    
+                            <td>
+                                <span class="customer-status active-status">
+                                    Active
+                                </span>
+                            </td>
+    
+                            <td>Hira</td>
+    
+                            <td>Aug 19</td>
+
+                            <td>
+                                <button class="delete-customer-btn">Delete</button>
+                            </td>
+                        </tr>
+    
+                    </tbody>
+    
+                </table>
+    
+            </div>
+    
+        </div>
+    
+    
+       
+    
+    </main>
+      
+    <div class="customer-modal" id="customerModal">
+
+        <div class="customer-modal-content">
+    
+            <div class="modal-header">
+                <div>
+                    <h2>Add New Customer</h2>
+                    <p>Enter customer information below.</p>
+                </div>
+    
+                <button class="close-modal" id="closeCustomerModal">
+                    &times;
+                </button>
+            </div>
+    
+            <form id="customerForm">
+    
+                <div class="form-row">
+    
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="customerName" placeholder="Enter full name" required>
+                    </div>
+    
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="customerPhone" placeholder="03XX-XXXXXXX" required>
+                    </div>
+    
+                </div>
+    
+                <div class="form-row">
+    
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="customerEmail" placeholder="Enter email">
+                    </div>
+    
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="customerLocation" placeholder="e.g. DHA Lahore">
+                    </div>
+    
+                </div>
+    
+                <div class="form-row">
+    
+                    <div class="form-group">
+                        <label>Property Interest</label>
+                        <input type="text" id="customerProperty" placeholder="e.g. 5 Marla House">
+                    </div>
+    
+                    <div class="form-group">
+                        <label>Budget</label>
+                        <input type="text" id="customerBudget" placeholder="e.g. 2 Crore">
+                    </div>
+    
+                </div>
+    
+                <div class="form-row">
+    
+                    <div class="form-group">
+                        <label>Agent</label>
+    
+                        <select id="customerAgent">
+                            <option value="">Select Agent</option>
+                            <option>Ali</option>
+                            <option>Hira</option>
+                            <option>Ahmed</option>
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label>Status</label>
+    
+                        <select id="customerStatus">
+                            <option>Active</option>
+                            <option>Inactive</option>
+                        </select>
+                    </div>
+    
+                </div>
+    
+                <div class="modal-actions">
+    
+                    <button type="button" class="cancel-btn" id="cancelCustomer">
+                        Cancel
+                    </button>
+    
+                    <button type="submit" class="save-customer-btn">
+                        Save Customer
+                    </button>
+    
+                </div>
+    
+            </form>
+    
+        </div>
+    
+    </div>
+
+    <div class="customer-delete-modal" id="customerDeleteModal">
+
+        <div class="customer-delete-box">
+    
+            <div class="customer-delete-icon">
+                <i class="bi bi-trash3"></i>
+            </div>
+    
+            <h3>Delete Customer?</h3>
+    
+            <p>
+                Are you sure you want to delete
+                <strong id="deleteCustomerName"></strong>?
+                This action cannot be undone.
+            </p>
+    
+            <div class="customer-delete-actions">
+    
+                <button class="cancel-customer-delete" id="cancelCustomerDelete">
+                    Cancel
+                </button>
+    
+                <button class="confirm-customer-delete" id="confirmCustomerDelete">
+                    Delete Customer
+                </button>
+    
+            </div>
+    
+        </div>
+    
+    </div>
+
+    <script>
+
+        const addCustomerBtn = document.getElementById("addCustomerBtn");
+        const customerModal = document.getElementById("customerModal");
+        const closeCustomerModal = document.getElementById("closeCustomerModal");
+        const cancelCustomer = document.getElementById("cancelCustomer");
+        const customerForm = document.getElementById("customerForm");
+        
+        const tableBody = document.getElementById("customerTableBody");
+        const customerCount = document.getElementById("customerCount");
+        const totalCustomers = document.getElementById("totalCustomers");
+        const activeCustomers = document.getElementById("activeCustomers");
+        const inactiveCustomers = document.getElementById("inactiveCustomers");
+        
+        const customerSearch = document.getElementById("customerSearch");
+        const customerFilter = document.getElementById("customerFilter");
+        
+        /* OPEN MODAL */
+        
+        addCustomerBtn.addEventListener("click", function(){
+            customerModal.style.display = "flex";
+        });
+        
+        
+        /* CLOSE MODAL */
+        
+        closeCustomerModal.addEventListener("click", function(){
+            customerModal.style.display = "none";
+        });
+        
+        
+        cancelCustomer.addEventListener("click", function(){
+            customerModal.style.display = "none";
+        });
+        
+        
+        customerModal.addEventListener("click", function(event){
+        
+            if(event.target === customerModal){
+                customerModal.style.display = "none";
+            }
+        
+        });
+        
+        
+        /* ADD CUSTOMER */
+        
+        customerForm.addEventListener("submit", function(event){
+        
+            event.preventDefault();
+        
+            const name = document.getElementById("customerName").value;
+            const phone = document.getElementById("customerPhone").value;
+            const email = document.getElementById("customerEmail").value;
+            const location = document.getElementById("customerLocation").value;
+            const property = document.getElementById("customerProperty").value;
+            const budget = document.getElementById("customerBudget").value;
+            const agent = document.getElementById("customerAgent").value;
+            const status = document.getElementById("customerStatus").value;
+        
+            const customerNumber = tableBody.rows.length + 1;
+        
+            const newRow = document.createElement("tr");
+        
+            newRow.innerHTML = `
+                <td>
+                    <strong>${name}</strong>
+                    <small>Customer #${String(customerNumber).padStart(3, "0")}</small>
+                </td>
+        
+                <td>
+                    <small>${phone}</small>
+                    <small>${email}</small>
+                </td>
+        
+                <td>${location}</td>
+        
+                <td>${property}</td>
+        
+                <td>${budget}</td>
+        
+                <td>
+                    <span class="customer-status ${
+                        status === "Active"
+                        ? "active-status"
+                        : "inactive-status"
+                    }">
+                        ${status}
+                    </span>
+                </td>
+        
+                <td>${agent}</td>
+        
+                <td>Just now</td>
+        
+                <td>
+                    <button class="delete-customer-btn">Delete</button>
+                </td>
+            `;
+        
+            tableBody.appendChild(newRow);
+        
+            updateCustomerCounts();
+        
+            customerForm.reset();
+        
+            customerModal.style.display = "none";
+        
+        });
+        
+        
+        /* SEARCH CUSTOMER */
+        
+      /* SEARCH + FILTER */
+
+function filterCustomers(){
+
+const searchValue = customerSearch.value.toLowerCase().trim();
+const filterValue = customerFilter.value;
+
+const rows = tableBody.querySelectorAll("tr");
+
+rows.forEach(function(row){
+
+    const rowText = row.textContent.toLowerCase();
+
+    const statusElement = row.querySelector(".customer-status");
+
+    const status = statusElement
+        ? statusElement.textContent.trim()
+        : "";
+
+    const matchesSearch = rowText.includes(searchValue);
+
+    const matchesFilter =
+        filterValue === "All" ||
+        status === filterValue;
+
+    if(matchesSearch && matchesFilter){
+
+        row.style.display = "";
+
+    }
+    else{
+
+        row.style.display = "none";
+
+    }
+
+});
+
+}
+
+
+/* Search while typing */
+
+customerSearch.addEventListener("input", filterCustomers);
+
+
+/* Filter when dropdown changes */
+
+customerFilter.addEventListener("change", filterCustomers);
+        
+        
+       /* DELETE CUSTOMER */
+
+const customerDeleteModal = document.getElementById("customerDeleteModal");
+const deleteCustomerName = document.getElementById("deleteCustomerName");
+const cancelCustomerDelete = document.getElementById("cancelCustomerDelete");
+const confirmCustomerDelete = document.getElementById("confirmCustomerDelete");
+
+let rowToDelete = null;
+
+
+/* Open Delete Modal */
+
+tableBody.addEventListener("click", function(event){
+
+    if(event.target.classList.contains("delete-customer-btn")){
+
+        rowToDelete = event.target.closest("tr");
+
+        const customerName = rowToDelete.cells[0]
+            .querySelector("strong")
+            .textContent;
+
+        deleteCustomerName.textContent = customerName;
+
+        customerDeleteModal.style.display = "flex";
+    }
+
+});
+
+
+/* Cancel Delete */
+
+cancelCustomerDelete.addEventListener("click", function(){
+
+    customerDeleteModal.style.display = "none";
+
+    rowToDelete = null;
+
+});
+
+
+/* Confirm Delete */
+
+confirmCustomerDelete.addEventListener("click", function(){
+
+    if(rowToDelete){
+
+        rowToDelete.remove();
+
+        updateCustomerCounts();
+
+    }
+
+    customerDeleteModal.style.display = "none";
+
+    rowToDelete = null;
+
+});
+
+
+/* Close when clicking outside */
+
+customerDeleteModal.addEventListener("click", function(event){
+
+    if(event.target === customerDeleteModal){
+
+        customerDeleteModal.style.display = "none";
+
+        rowToDelete = null;
+
+    }
+
+});
+ /* UPDATE COUNTS */
+        
+        function updateCustomerCounts(){
+        
+            const total = tableBody.rows.length;
+        
+            customerCount.textContent = total + " Customers";
+        
+            totalCustomers.textContent = total;
+        
+            let active = 0;
+            let inactive = 0;
+        
+            tableBody.querySelectorAll(".customer-status").forEach(function(statusElement){
+        
+                if(statusElement.textContent.trim() === "Active"){
+                    active++;
+                }
+                else{
+                    inactive++;
+                }
+        
+            });
+        
+            activeCustomers.textContent = active;
+            inactiveCustomers.textContent = inactive;
+        
+        }
+        
+        </script>
+
+<script>
+
+    const profileBtn = document.getElementById("profileBtn");
+    const profileWrapper = document.querySelector(".profile-wrapper");
+    
+    profileBtn.addEventListener("click", function(event){
+    
+        event.stopPropagation();
+    
+        profileWrapper.classList.toggle("open");
+    
+    });
+    
+    
+    document.addEventListener("click", function(event){
+    
+        if(!profileWrapper.contains(event.target)){
+    
+            profileWrapper.classList.remove("open");
+    
+        }
+    
+    });
+    
+    </script>
+</body>
+</html>

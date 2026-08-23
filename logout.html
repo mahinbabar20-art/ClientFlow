@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientFlow</title>>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<style>
+    /* =========================
+       GLOBAL
+    ========================= */
+    
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+    
+    body{
+        font-family:Arial, Helvetica, sans-serif;
+        background:#0f1113;
+        color:#f5f5f5;
+    }
+    
+    
+    /* =========================
+       SIDEBAR
+    ========================= */
+    
+    .sidebar{
+        width:250px;
+        height:100vh;
+        background:#0a0b0d;
+        padding:25px 15px;
+        position:fixed;
+        left:0;
+        top:0;
+        border-right:1px solid #24272b;
+        transition:.3s ease;
+        z-index:1000;
+    }
+    
+    .logo{
+        margin-bottom:45px;
+        padding-left:10px;
+        font-size:24px;
+        font-weight:bold;
+        color:#ff7a00;
+    }
+    
+    .sidebar nav{
+        display:flex;
+        flex-direction:column;
+        gap:7px;
+    }
+    
+    .sidebar i{
+        font-size:18px;
+    }
+    
+    .sidebar a{
+        text-decoration:none;
+        color:#92969c;
+        font-size:14px;
+        padding:12px 15px;
+        border-radius:9px;
+        display:flex;
+        align-items:center;
+        gap:12px;
+        transition:.2s ease;
+    }
+    
+    .sidebar a:hover{
+        background:#1a1d20;
+        color:#ff7a00;
+    }
+    
+    .sidebar a.active{
+        background:#24180f;
+        color:#ff7a00;
+        font-weight:600;
+        border-left:3px solid #ff7a00;
+    }
+    
+    .sidebar-bottom{
+        position:absolute;
+        bottom:20px;
+        left:15px;
+        right:15px;
+        display:flex;
+        flex-direction:column;
+    }
+    
+    
+    /* =========================
+       TOPBAR
+    ========================= */
+    
+    .topbar{
+        height:70px;
+        background:#111315;
+        position:fixed;
+        top:0;
+        left:250px;
+        right:0;
+    
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+    
+        padding:0 30px;
+    
+        border-bottom:1px solid #24272b;
+        z-index:900;
+        transition:.3s ease;
+    }
+    
+    .topbar-right{
+        display:flex;
+        align-items:center;
+        gap:25px;
+    }
+    
+    .toggle-btn{
+        background:none;
+        border:none;
+        color:#f5f5f5;
+        padding:8px;
+        font-size:22px;
+        cursor:pointer;
+    }
+    
+    .profile{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        color:#ddd;
+    }
+    
+    .profile i{
+        font-size:30px;
+        color:#ff7a00;
+    }
+    
+    
+    /* =========================
+       SIDEBAR COLLAPSE
+    ========================= */
+    
+    #menu-toggle{
+        display:none;
+    }
+    
+    #menu-toggle:checked ~ .sidebar{
+        width:75px;
+    }
+    
+    #menu-toggle:checked ~ .sidebar .logo{
+        font-size:0;
+    }
+    
+    #menu-toggle:checked ~ .sidebar a{
+        font-size:0;
+        justify-content:center;
+    }
+    
+    #menu-toggle:checked ~ .sidebar i{
+        font-size:20px;
+    }
+    
+    #menu-toggle:checked ~ .main-content{
+        margin-left:75px;
+    }
+    
+    #menu-toggle:checked ~ .topbar{
+        left:75px;
+    }
+    
+    
+    /* =========================
+       MAIN
+    ========================= */
+    
+    .main-content{
+        margin-left:250px;
+        padding:105px 40px 45px;
+        transition:.3s ease;
+    }
+
+/* =========================
+   LOGOUT PAGE
+========================= */
+
+.logout-container{
+    margin-left:250px;
+
+    min-height:100vh;
+
+    background:#0f1113;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:40px;
+
+    transition:.3s ease;
+}
+
+
+/* =========================
+   LOGOUT CARD
+========================= */
+
+.logout-card{
+    width:420px;
+
+    background:#171a1d;
+
+    border:1px solid #292d32;
+
+    padding:38px 35px;
+
+    text-align:center;
+
+    border-radius:18px;
+
+    box-shadow:0 15px 45px rgba(0,0,0,.35);
+
+    transition:.2s ease;
+}
+
+.logout-card:hover{
+    border-color:#353a40;
+}
+
+
+/* =========================
+   LOGOUT ICON
+========================= */
+
+.logout-icon{
+    width:65px;
+    height:65px;
+
+    margin:0 auto 20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#2a1717;
+
+    border:1px solid #4a2525;
+
+    color:#ff6868;
+
+    font-size:27px;
+}
+
+
+/* =========================
+   HEADING
+========================= */
+
+.logout-card h2{
+    color:#fff;
+
+    font-size:21px;
+
+    margin-bottom:10px;
+}
+
+
+/* =========================
+   DESCRIPTION
+========================= */
+
+.logout-card p{
+    color:#858b92;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    margin-bottom:27px;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.logout-buttons{
+    display:flex;
+
+    justify-content:center;
+
+    gap:10px;
+}
+
+
+/* =========================
+   CANCEL
+========================= */
+
+.cancel-btn{
+    padding:11px 22px;
+
+    border-radius:8px;
+
+    border:1px solid #363a40;
+
+    background:#22262a;
+
+    color:#ccc;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    transition:.2s ease;
+}
+
+.cancel-btn:hover{
+    background:#2c3035;
+
+    color:#fff;
+
+    transform:translateY(-1px);
+}
+
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+
+.logout-btn{
+    padding:11px 22px;
+
+    border-radius:8px;
+
+    border:1px solid #4a2525;
+
+    background:#2a1717;
+
+    color:#ff6868;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    transition:.2s ease;
+}
+
+.logout-btn:hover{
+    background:#d64545;
+
+    border-color:#d64545;
+
+    color:#fff;
+
+    transform:translateY(-1px);
+
+    box-shadow:0 6px 18px rgba(214,69,69,.25);
+}
+
+.logout-btn:active,
+.cancel-btn:active{
+    transform:scale(.96);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+    .logout-container{
+        margin-left:75px;
+    }
+
+}
+
+
+@media(max-width:700px){
+
+    .logout-container{
+        margin-left:75px;
+
+        padding:25px 20px;
+    }
+
+    .logout-card{
+        width:100%;
+
+        max-width:420px;
+
+        padding:32px 25px;
+    }
+
+}
+
+/* .link{
+    text-decoration: none;
+} */
+
+
+/* =========================
+   PROFILE DROPDOWN
+========================= */
+
+.profile-wrapper{
+    position:relative;
+}
+
+
+/* Profile Button */
+
+.profile{
+    border:none;
+    background:none;
+
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    color:#ddd;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    padding:6px 8px;
+
+    border-radius:9px;
+
+    transition:.2s ease;
+}
+
+.profile:hover{
+    background:#1a1d20;
+}
+
+.profile i:first-child{
+    font-size:30px;
+    color:#ff7a00;
+}
+
+
+/* Arrow */
+
+.profile-arrow{
+    font-size:11px !important;
+
+    color:#777d84 !important;
+
+    transition:.2s ease;
+}
+
+
+/* Rotate arrow */
+
+.profile-wrapper.open .profile-arrow{
+    transform:rotate(180deg);
+}
+
+
+/* =========================
+   PROFILE MENU
+========================= */
+
+.profile-menu{
+
+    position:absolute;
+
+    top:52px;
+    right:0;
+
+    width:235px;
+
+    background:#171a1d;
+
+    border:1px solid #292d32;
+
+    border-radius:13px;
+
+    padding:10px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.45);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:translateY(-8px);
+
+    transition:.2s ease;
+
+    z-index:2000;
+}
+
+
+/* Open */
+
+.profile-wrapper.open .profile-menu{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:translateY(0);
+}
+
+
+/* =========================
+   MENU HEADER
+========================= */
+
+.profile-menu-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:11px;
+
+    padding:10px;
+
+}
+
+.profile-menu-header > i{
+
+    font-size:35px;
+
+    color:#ff7a00;
+}
+
+.profile-menu-header strong{
+
+    display:block;
+
+    color:#fff;
+
+    font-size:13px;
+
+    margin-bottom:3px;
+}
+
+.profile-menu-header small{
+
+    display:block;
+
+    color:#777d84;
+
+    font-size:10px;
+}
+
+
+/* Divider */
+
+.profile-divider{
+
+    height:1px;
+
+    background:#292d32;
+
+    margin:6px 0;
+}
+
+
+/* =========================
+   MENU LINKS
+========================= */
+
+.profile-menu a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    text-decoration:none;
+
+    color:#a5a9ae;
+
+    padding:11px;
+
+    border-radius:8px;
+
+    font-size:13px;
+
+    transition:.2s ease;
+}
+
+.profile-menu a i{
+
+    font-size:16px;
+}
+
+
+/* Hover */
+
+.profile-menu a:hover{
+
+    background:#22262a;
+
+    color:#ff7a00;
+}
+
+
+/* Logout */
+
+.profile-menu .profile-logout:hover{
+
+    color:#ff6868;
+
+    background:#2a1717;
+}
+</style>
+<body>
+    <input type="checkbox" id="menu-toggle">
+    <header class="topbar">
+
+        <label for="menu-toggle" class="toggle-btn">
+            <i class="bi bi-list"></i>
+        </label>
+    
+        <div class="topbar-right">
+            <i class="bi bi-bell"></i>
+    
+            <div class="profile-wrapper">
+
+                <button class="profile" id="profileBtn">
+                    <i class="bi bi-person-circle"></i>
+            
+                    <span>Admin</span>
+            
+                    <i class="bi bi-chevron-down profile-arrow"></i>
+                </button>
+            
+            
+                <div class="profile-menu" id="profileMenu">
+            
+                    <div class="profile-menu-header">
+                        <i class="bi bi-person-circle"></i>
+            
+                        <div>
+                            <strong>Admin User</strong>
+                            <small>admin@example.com</small>
+                        </div>
+                    </div>
+            
+            
+                    <div class="profile-divider"></div>
+            
+            
+                    <a href="settings.html">
+                        <i class="bi bi-gear"></i>
+                        Settings
+                    </a>
+            
+            
+                    <a href="logout.html" class="profile-logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </a>
+            
+                </div>
+            
+            </div>
+        </div>
+    
+    </header>
+    
+    
+     <aside class="sidebar">
+     <h2 class="logo">ClientFlow</h2>
+       <nav>
+        <a href="dashboard.html">
+            <i class="bi bi-grid"></i>
+            Dashboard</a>
+        <a href="lead.html">
+            <i class="bi bi-people"></i>
+            Leads</a>
+        <a href="customers.html">
+            <i class="bi bi-person"></i>
+            Customers</a>
+        <a href="properties.html">
+            <i class="bi bi-house"></i>
+            Properties</a>
+        <a href="pipelines.html">
+            <i class="bi bi-kanban"></i>
+            Pipeline</a>
+        <a href="followup.html">
+            <i class="bi bi-calendar-check"></i>
+            Follow ups</a>
+        <a href="agent.html">
+            <i class="bi bi-person-badge"></i>
+            Agents</a>
+        <a href="reports.html">
+            <i class="bi bi-bar-chart"></i>
+            Reports</a>
+       </nav>
+     <div class="sidebar-bottom">
+        <a href="settings.html">
+            <i class="bi bi-gear"></i>
+            Settings</a>
+        <a href="logout.html" class="active">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout</a>
+     </div>
+     </aside>
+
+     <main>
+         <div class="logout-container">
+            <div class="logout-card">
+                <div class="logout-icon">↪</div>
+                <h2>Ready to leave?</h2>
+                <p>Are you sure you want to logout from your account?</p>
+                <div class="logout-buttons">
+                    <button class="cancel-btn">Cancel</button>
+                    <button class="logout-btn" onclick="logoutUser()">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+             
+             </div>
+     </main> 
+     
+     <script>
+        function logoutUser(){
+        
+            sessionStorage.removeItem("ClientFlowLoggedIn");
+            sessionStorage.removeItem("ClientFlowUser");
+        
+            window.location.href = "http://127.0.0.1:5500/sign-in.html";
+        
+        }
+        </script>
+<script>
+
+    const profileBtn = document.getElementById("profileBtn");
+    const profileWrapper = document.querySelector(".profile-wrapper");
+    
+    profileBtn.addEventListener("click", function(event){
+    
+        event.stopPropagation();
+    
+        profileWrapper.classList.toggle("open");
+    
+    });
+    
+    
+    document.addEventListener("click", function(event){
+    
+        if(!profileWrapper.contains(event.target)){
+    
+            profileWrapper.classList.remove("open");
+    
+        }
+    
+    });
+    
+    </script>
+</body>
+</html>
